@@ -4,13 +4,15 @@ import com.thehutgroup.accelerator.connectn.player.Board;
 import com.thehutgroup.accelerator.connectn.player.Counter;
 import com.thehutgroup.accelerator.connectn.player.Position;
 
+import static java.lang.Math.abs;
+
 public class BoardAnalyser {
     private final Board board;
     private final Position lastCounterPosition;
     private final Counter counter;
     private final int winningNumber;
 
-    public BoardAnalyser(Board board, Position lastCounterPosition){
+    public BoardAnalyser(Board board, Position lastCounterPosition) {
         this.board = board;
         this.lastCounterPosition = lastCounterPosition;
         this.counter = board.getCounterAtPosition(lastCounterPosition);
@@ -18,7 +20,7 @@ public class BoardAnalyser {
 //        System.out.println("winning number: " + winningNumber);
     }
 
-    public BoardAnalyser(Board board, Position lastCounterPosition, Counter counter, int winningNumber){
+    public BoardAnalyser(Board board, Position lastCounterPosition, Counter counter, int winningNumber) {
         this.board = board;
         this.lastCounterPosition = lastCounterPosition;
         this.counter = counter;
@@ -41,7 +43,7 @@ public class BoardAnalyser {
         return winningNumber;
     }
 
-    public boolean hasWon(){
+    public boolean hasWon() {
         return hasWonRow() || hasWonColumn() || hasWonDiagonal1() || hasWonDiagonal2();
     }
 
@@ -53,15 +55,15 @@ public class BoardAnalyser {
         return connectedSoFar >= getWinningNumber();
     }
 
-    private int getBoardWidth(){
+    private int getBoardWidth() {
         return board.getConfig().getWidth();
     }
 
-    private int getBoardHeight(){
+    private int getBoardHeight() {
         return board.getConfig().getHeight();
     }
 
-    public int evaluateBoard(){
+    public int evaluateBoard() {
 
         //TODO: blocking opponent +points
         //TODO: check around the last token you inserted
@@ -70,7 +72,15 @@ public class BoardAnalyser {
         int connectedDiagonally1 = connectedDiagonal1Up() + connectedDiagonal1Down();
         int connectedDiagonally2 = connectedDiagonal2Up() + connectedDiagonal2Down();
 
-        int score = connectedInRow * 2 + connectedInColumn * 2 + connectedDiagonally1 * 3 + connectedDiagonally2 * 3;
+        int closerToCentreBias = 0;
+
+        int proximityToCentre = abs(lastCounterPosition.getX() - getBoardWidth() / 2);
+
+        if (proximityToCentre <= 3) {
+            closerToCentreBias = 1;
+        }
+
+        int score = connectedInRow * 3 + connectedInColumn * 3 + connectedDiagonally1 * 3 + connectedDiagonally2 * 3 + closerToCentreBias;
 
         return score;
     }
@@ -82,7 +92,7 @@ public class BoardAnalyser {
         Counter counterCheck = counter;
         int currentX = x + 1;
 
-        while (counter == counterCheck && currentX <= getBoardWidth() -1) {
+        while (counter == counterCheck && currentX <= getBoardWidth() - 1) {
 
             Position position = new Position(currentX, y);
             counterCheck = board.getCounterAtPosition(position);
@@ -121,7 +131,7 @@ public class BoardAnalyser {
         return connectedSoFar >= winningNumber;
     }
 
-    private int connectedUp(){
+    private int connectedUp() {
         int x = lastCounterPosition.getX();
         int y = lastCounterPosition.getY();
         int connectedSoFar = 0;
@@ -141,7 +151,7 @@ public class BoardAnalyser {
         return connectedSoFar;
     }
 
-    private int connectedDown(){
+    private int connectedDown() {
         int x = lastCounterPosition.getX();
         int y = lastCounterPosition.getY();
         int connectedSoFar = 0;
@@ -168,7 +178,7 @@ public class BoardAnalyser {
         return connectedSoFar >= winningNumber;
     }
 
-    private int connectedDiagonal1Down(){
+    private int connectedDiagonal1Down() {
         int x = lastCounterPosition.getX();
         int y = lastCounterPosition.getY();
         int connectedSoFar = 0;
@@ -176,7 +186,7 @@ public class BoardAnalyser {
         int currentY = y - 1;
         int currentX = x - 1;
 
-        while (counter == counterCheck && currentY >= 0 && currentX >=0) {
+        while (counter == counterCheck && currentY >= 0 && currentX >= 0) {
 
             Position position = new Position(currentX, currentY);
             counterCheck = board.getCounterAtPosition(position);
@@ -188,7 +198,7 @@ public class BoardAnalyser {
         return connectedSoFar;
     }
 
-    private int connectedDiagonal1Up(){
+    private int connectedDiagonal1Up() {
         int x = lastCounterPosition.getX();
         int y = lastCounterPosition.getY();
         int connectedSoFar = 0;
@@ -216,7 +226,7 @@ public class BoardAnalyser {
         return connectedSoFar >= winningNumber;
     }
 
-    private int connectedDiagonal2Up(){
+    private int connectedDiagonal2Up() {
         int x = lastCounterPosition.getX();
         int y = lastCounterPosition.getY();
         int connectedSoFar = 0;
@@ -236,7 +246,7 @@ public class BoardAnalyser {
         return connectedSoFar;
     }
 
-    private int connectedDiagonal2Down(){
+    private int connectedDiagonal2Down() {
         int x = lastCounterPosition.getX();
         int y = lastCounterPosition.getY();
         int connectedSoFar = 0;
@@ -257,7 +267,7 @@ public class BoardAnalyser {
     }
 
 
-    private int updateConnectedSoFar(int connectedSoFar, Position position){
+    private int updateConnectedSoFar(int connectedSoFar, Position position) {
         if (board.isWithinBoard(position)) {
             Counter counterCheck = board.getCounterAtPosition(position);
             if (counterCheck == counter) {

@@ -6,7 +6,7 @@ import com.thehutgroup.accelerator.connectn.player.*;
 public class ConnectIfYouDare extends Player {
     public ConnectIfYouDare(Counter counter) {
         //TODO: fill in your name here
-        super(counter, ConnectIfYouDare.class.getName());
+        super(counter, "Connectator3000");
     }
 
     @Override
@@ -14,7 +14,7 @@ public class ConnectIfYouDare extends Player {
         //TODO: some crazy analysis
         //TODO: make sure said analysis uses less than 2G of heap and returns within 10 seconds on whichever machine is running it
 
-        Minimax minimax = new Minimax(board, getCounter(), 3, -1000, 1000);
+        Minimax minimax = new Minimax(board, getCounter(), 5, -1000, 1000);
         // max depth must be odd to evaluate winning
 
         return minimax.runMinimax();
