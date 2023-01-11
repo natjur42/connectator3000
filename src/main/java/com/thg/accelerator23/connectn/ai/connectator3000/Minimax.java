@@ -21,7 +21,10 @@ public class Minimax {
     }
 
     public int runMinimax(){
-        return getMoveFromScoreMoveArray(maximize(board, null, myCounter, alpha, beta, 0));
+        int[] result = maximize(board, null, myCounter, alpha, beta, 0);
+        System.out.println("best score: " + getScoreFromScoreMoveArray(result));
+        System.out.println("best move: " + getMoveFromScoreMoveArray(result));
+        return getMoveFromScoreMoveArray(result);
 
     }
 
@@ -36,6 +39,8 @@ public class Minimax {
         if (depth == this.maxDepth){
             BoardAnalyser analyser = new BoardAnalyser(board, lastPosition);
             score = analyser.evaluateBoard();
+            System.out.println("score" + score);
+            System.out.println("move" + lastPosition.getX());
 
             returnVals[0] = score;
             returnVals[1] = lastPosition.getX();
@@ -45,12 +50,10 @@ public class Minimax {
 
 
         for (int possibleMove = 0; possibleMove < board.getConfig().getWidth(); possibleMove++) {
-            //TODO: check if that move would be valid (if loop)
             if (isEmpty(board, possibleMove)) {
                 try {
                     Position possibleCounterPosition = getCounterPositionFromMoveOnX(board, possibleMove);
                     Board possibleBoard = new Board(board, possibleMove, counter);
-                    //TODO: if I play this move, does the game stop?
                     ResultType result = getResult(possibleBoard, possibleCounterPosition, counter);
 
 //                    System.out.println("result = " + result);
@@ -67,6 +70,8 @@ public class Minimax {
                         returnVals[0] = bestScore;
                         returnVals[1] = bestMove;
                     }
+
+                    System.out.println("best score: " + bestScore);
 
                     if (score > alpha){
                         alpha = score;
