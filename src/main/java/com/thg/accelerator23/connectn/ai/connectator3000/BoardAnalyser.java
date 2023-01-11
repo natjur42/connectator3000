@@ -15,6 +15,7 @@ public class BoardAnalyser {
         this.lastCounterPosition = lastCounterPosition;
         this.counter = board.getCounterAtPosition(lastCounterPosition);
         this.winningNumber = board.getConfig().getnInARowForWin();
+//        System.out.println("winning number: " + winningNumber);
     }
 
     public BoardAnalyser(Board board, Position lastCounterPosition, Counter counter, int winningNumber){

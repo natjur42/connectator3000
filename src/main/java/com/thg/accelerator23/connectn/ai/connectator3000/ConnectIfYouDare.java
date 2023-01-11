@@ -17,23 +17,26 @@ public class ConnectIfYouDare extends Player {
         return getMoveFromScoreMoveArray(maximize(board, getCounter()));
     }
 
+    //TODO: now exceeds time limit - need to build some sort of memory for reflections and repeated boards
 
     private int[] maximize(Board board, Counter counter) {
         int score;
-        int bestScore = 0;
+        int bestScore = -8;
         int bestMove;
         int[] returnVals = new int[2];
         for (int possibleMove = 0; possibleMove < board.getConfig().getWidth(); possibleMove++) {
             //TODO: check if that move would be valid (if loop)
             if (isEmpty(board, possibleMove)) {
                 try {
-                    Position possibleCounterPosition = getCounterPositionFromMoveOnY(board, possibleMove);
+                    Position possibleCounterPosition = getCounterPositionFromMoveOnX(board, possibleMove);
                     Board possibleBoard = new Board(board, possibleMove, counter);
                     //TODO: if I play this move, does the game stop?
-                    ResultType result = getWinner(board, possibleCounterPosition, counter);
+                    ResultType result = getResult(possibleBoard, possibleCounterPosition, counter);
 
+//                    System.out.println("result = " + result);
                     if (!(result == null)) {
                         score = getScore(result);
+//                        System.out.println("score: " + score);
                     } else {
                         score = getScoreFromScoreMoveArray(minimize(possibleBoard, getOtherCounter(counter)));
                     }
@@ -45,15 +48,15 @@ public class ConnectIfYouDare extends Player {
                         returnVals[1] = bestMove;
                     }
 
-                    return returnVals;
 
 
                 } catch (InvalidMoveException e) {
                     e.printStackTrace();
                 }
+
             }
         }
-        throw new RuntimeException("board is full.");
+        return returnVals;
     }
 
     private int[] minimize(Board board, Counter counter) {
@@ -65,10 +68,10 @@ public class ConnectIfYouDare extends Player {
             //TODO: check if that move would be valid (if loop)
             if (isEmpty(board, possibleMove)) {
                 try {
-                    Position possibleCounterPosition = getCounterPositionFromMoveOnY(board, possibleMove);
+                    Position possibleCounterPosition = getCounterPositionFromMoveOnX(board, possibleMove);
                     Board possibleBoard = new Board(board, possibleMove, counter);
                     //TODO: if I play this move, does the game stop?
-                    ResultType result = getWinner(board, possibleCounterPosition, counter);
+                    ResultType result = getResult(possibleBoard, possibleCounterPosition, counter);
 
                     if (!(result == null)) {
                         score = getScore(result);
@@ -83,15 +86,13 @@ public class ConnectIfYouDare extends Player {
                         scoreAndMove[1] = bestMove;
                     }
 
-                    return scoreAndMove;
-
 
                 } catch (InvalidMoveException e) {
                     e.printStackTrace();
                 }
             }
         }
-        throw new RuntimeException("board is full.");
+        return scoreAndMove;
     }
 
     private int getScoreFromScoreMoveArray(int[] scoreMove) {
@@ -112,16 +113,21 @@ public class ConnectIfYouDare extends Player {
         }
     }
 
-    private boolean isEmpty(Board board, int moveY) {
-        return board.hasCounterAtPosition(new Position(board.getConfig().getHeight() - 1, moveY));
+    private boolean isEmpty(Board board, int moveX) {
+        return !board.hasCounterAtPosition(new Position(moveX, board.getConfig().getHeight() - 1));
     }
 
     private boolean hasWon(Board board, Position lastCounterPosition) {
+//        System.out.println("last counter position: " + lastCounterPosition.getX() + ", " + lastCounterPosition.getY());
         BoardAnalyser analyser = new BoardAnalyser(board, lastCounterPosition);
-        return analyser.hasWon();
+        boolean hasWonBool = analyser.hasWon();
+//        System.out.println("hasWonBool: " + hasWonBool);
+        return hasWonBool;
     }
 
-    private ResultType getWinner(Board board, Position lastCounterPosition, Counter counter) {
+    private ResultType getResult(Board board, Position lastCounterPosition, Counter counter) {
+//        System.out.println("current counter: " + counter);
+//        System.out.println("my counter: " + getCounter());
         if (hasWon(board, lastCounterPosition)) {
             if (counter == getCounter()) {
                 return ResultType.WIN;
@@ -149,7 +155,7 @@ public class ConnectIfYouDare extends Player {
 
     private boolean hasFinished(Board board) {
         for (int i = 0; i < board.getConfig().getWidth(); i++) {
-            if (!board.hasCounterAtPosition(new Position(board.getConfig().getHeight() - 1, i))) {
+            if (!board.hasCounterAtPosition(new Position(i, board.getConfig().getHeight() - 1))) {
                 return false;
             }
         }
@@ -157,14 +163,14 @@ public class ConnectIfYouDare extends Player {
         return true;
     }
 
-    private Position getCounterPositionFromMoveOnY(Board board, int y) {
+    private Position getCounterPositionFromMoveOnX(Board board, int x) {
         for (int i = 0; i < board.getConfig().getHeight(); i++) {
-            if (board.hasCounterAtPosition(new Position(i, y))) {
-                return new Position(i, y);
+            if (!board.hasCounterAtPosition(new Position(x, i))) {
+                return new Position(x, i);
             }
         }
 
-        throw new IndexOutOfBoundsException("No room in this column: " + y);
+        throw new IndexOutOfBoundsException("No room in this column: " + x);
     }
 
 

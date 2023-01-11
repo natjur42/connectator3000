@@ -7,7 +7,6 @@ import com.thehutgroup.accelerator.connectn.player.Position;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.mockito.Mockito.mock;
@@ -25,7 +24,8 @@ class BoardAnalyserTest {
     static Position mockDiagonal1WinPosition = mock(Position.class);
     static Position mockDiagonal2WinPosition = mock(Position.class);
 
-    static Counter testCounter = Counter.O;
+    static Counter player1Counter = Counter.O;
+    static Counter player2Counter = Counter.X;
 
     static GameConfig mockGameConfig = mock(GameConfig.class);
 
@@ -44,25 +44,25 @@ class BoardAnalyserTest {
         when(mockGameConfig.getHeight()).thenReturn(boardHeight);
         when(mockGameConfig.getnInARowForWin()).thenReturn(4);
 
-        rowWin[2][0] = testCounter;
-        rowWin[3][0] = testCounter;
-        rowWin[4][0] = testCounter;
-        rowWin[5][0] = testCounter;
+        rowWin[2][0] = player1Counter;
+        rowWin[3][0] = player1Counter;
+        rowWin[4][0] = player1Counter;
+        rowWin[5][0] = player1Counter;
 
-        columnWin[4][0] = testCounter;
-        columnWin[4][1] = testCounter;
-        columnWin[4][2] = testCounter;
-        columnWin[4][3] = testCounter;
+        columnWin[4][0] = player1Counter;
+        columnWin[4][1] = player1Counter;
+        columnWin[4][2] = player1Counter;
+        columnWin[4][3] = player1Counter;
 
-        diagonal1Win[4][0] = testCounter;
-        diagonal1Win[5][1] = testCounter;
-        diagonal1Win[6][2] = testCounter;
-        diagonal1Win[7][3] = testCounter;
+        diagonal1Win[4][0] = player1Counter;
+        diagonal1Win[5][1] = player1Counter;
+        diagonal1Win[6][2] = player1Counter;
+        diagonal1Win[7][3] = player1Counter;
 
-        diagonal2Win[7][0] = testCounter;
-        diagonal2Win[6][1] = testCounter;
-        diagonal2Win[5][2] = testCounter;
-        diagonal2Win[4][3] = testCounter;
+        diagonal2Win[7][0] = player1Counter;
+        diagonal2Win[6][1] = player1Counter;
+        diagonal2Win[5][2] = player1Counter;
+        diagonal2Win[4][3] = player1Counter;
 
     }
 
@@ -73,7 +73,7 @@ class BoardAnalyserTest {
         when(mockRowWinPosition.getY()).thenReturn(0);
 
         Board testBoard = new Board(rowWin, mockGameConfig);
-        BoardAnalyser testAnalyser = new BoardAnalyser(testBoard, mockRowWinPosition, testCounter, 4);
+        BoardAnalyser testAnalyser = new BoardAnalyser(testBoard, mockRowWinPosition, player1Counter, 4);
 
         assertTrue(testAnalyser.hasWonRow());
         assertFalse(testAnalyser.hasWonColumn());
@@ -89,7 +89,7 @@ class BoardAnalyserTest {
         when(mockColumnWinPosition.getY()).thenReturn(3);
 
         Board testBoard = new Board(columnWin, mockGameConfig);
-        BoardAnalyser testAnalyser = new BoardAnalyser(testBoard, mockColumnWinPosition, testCounter, 4);
+        BoardAnalyser testAnalyser = new BoardAnalyser(testBoard, mockColumnWinPosition, player1Counter, 4);
 
         assertTrue(testAnalyser.hasWonColumn());
         assertFalse(testAnalyser.hasWonRow());
@@ -105,7 +105,7 @@ class BoardAnalyserTest {
         when(mockDiagonal1WinPosition.getY()).thenReturn(3);
 
         Board testBoard = new Board(diagonal1Win, mockGameConfig);
-        BoardAnalyser testAnalyser = new BoardAnalyser(testBoard, mockDiagonal1WinPosition, testCounter, 4);
+        BoardAnalyser testAnalyser = new BoardAnalyser(testBoard, mockDiagonal1WinPosition, player1Counter, 4);
 
         assertTrue(testAnalyser.hasWonDiagonal1());
         assertFalse(testAnalyser.hasWonColumn());
@@ -121,13 +121,46 @@ class BoardAnalyserTest {
         when(mockDiagonal2WinPosition.getY()).thenReturn(3);
 
         Board testBoard = new Board(diagonal2Win, mockGameConfig);
-        BoardAnalyser testAnalyser = new BoardAnalyser(testBoard, mockDiagonal2WinPosition, testCounter, 4);
+        BoardAnalyser testAnalyser = new BoardAnalyser(testBoard, mockDiagonal2WinPosition, player1Counter, 4);
 
         assertTrue(testAnalyser.hasWonDiagonal2());
         assertFalse(testAnalyser.hasWonColumn());
         assertFalse(testAnalyser.hasWonDiagonal1());
         assertFalse(testAnalyser.hasWonRow());
         assertTrue(testAnalyser.hasWon());
+    }
+
+    @Test
+    public void hasWonFalseTest(){
+        Counter[][] columnLoss = new Counter[boardWidth][boardHeight];
+        columnLoss[4][0] = player1Counter;
+        columnLoss[4][1] = player1Counter;
+        columnLoss[4][2] = player1Counter;
+        columnLoss[4][3] = player2Counter;
+
+        Position mockBlockPosition = mock(Position.class);
+        when(mockBlockPosition.getX()).thenReturn(4);
+        when(mockBlockPosition.getY()).thenReturn(3);
+
+        Board testBoard = new Board(columnLoss, mockGameConfig);
+        BoardAnalyser testAnalyser = new BoardAnalyser(testBoard, mockBlockPosition, player2Counter, 4);
+
+        assertFalse(testAnalyser.hasWon());
+    }
+
+    @Test
+    public void hasWonFalseTest2(){
+        Counter[][] columnLoss = new Counter[boardWidth][boardHeight];
+        columnLoss[4][0] = player1Counter;
+
+        Position mockBlockPosition = mock(Position.class);
+        when(mockBlockPosition.getX()).thenReturn(4);
+        when(mockBlockPosition.getY()).thenReturn(3);
+
+        Board testBoard = new Board(columnLoss, mockGameConfig);
+        BoardAnalyser testAnalyser = new BoardAnalyser(testBoard, mockBlockPosition, player1Counter, 4);
+
+        assertFalse(testAnalyser.hasWon());
     }
 
 
