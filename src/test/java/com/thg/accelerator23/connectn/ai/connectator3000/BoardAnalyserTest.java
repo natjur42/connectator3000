@@ -163,6 +163,41 @@ class BoardAnalyserTest {
         assertFalse(testAnalyser.hasWon());
     }
 
+    @Test
+    public void calculatingScore(){
+        Counter[][] boardSetup = new Counter[boardWidth][boardHeight];
+        boardSetup[4][0] = player1Counter;
+        boardSetup[4][1] = player1Counter;
+        boardSetup[4][2] = player1Counter;
+        boardSetup[4][3] = player1Counter;
+
+        Position mockBlockPosition = mock(Position.class);
+        when(mockBlockPosition.getX()).thenReturn(4);
+        when(mockBlockPosition.getY()).thenReturn(3);
+
+        Board testBoard = new Board(boardSetup, mockGameConfig);
+        BoardAnalyser testAnalyser = new BoardAnalyser(testBoard, mockBlockPosition, player1Counter, 4);
+
+        System.out.println(testAnalyser.evaluateBoard());
+    }
+
+    @Test
+    public void calculatingScore2(){
+        Counter[][] boardSetup = new Counter[boardWidth][boardHeight];
+        boardSetup[4][0] = player1Counter;
+        boardSetup[4][1] = player1Counter;
+        boardSetup[4][2] = player1Counter;
+
+        Position mockBlockPosition = mock(Position.class);
+        when(mockBlockPosition.getX()).thenReturn(4);
+        when(mockBlockPosition.getY()).thenReturn(2);
+
+        Board testBoard = new Board(boardSetup, mockGameConfig);
+        BoardAnalyser testAnalyser = new BoardAnalyser(testBoard, mockBlockPosition, player1Counter, 4);
+
+        System.out.println(testAnalyser.evaluateBoard());
+    }
+
 
 
 }

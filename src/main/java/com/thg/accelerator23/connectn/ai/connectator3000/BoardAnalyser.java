@@ -61,6 +61,20 @@ public class BoardAnalyser {
         return board.getConfig().getHeight();
     }
 
+    public int evaluateBoard(){
+
+        //TODO: blocking opponent +points
+        //TODO: check around the last token you inserted
+        int connectedInRow = connectedRight() + connectedLeft();
+        int connectedInColumn = connectedUp() + connectedDown();
+        int connectedDiagonally1 = connectedDiagonal1Up() + connectedDiagonal1Down();
+        int connectedDiagonally2 = connectedDiagonal2Up() + connectedDiagonal2Down();
+
+        int score = connectedInRow * 2 + connectedInColumn * 2 + connectedDiagonally1 * 3 + connectedDiagonally2 * 3;
+
+        return score;
+    }
+
     private int connectedRight() {
         int x = lastCounterPosition.getX();
         int y = lastCounterPosition.getY();
