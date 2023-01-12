@@ -80,12 +80,20 @@ public class BoardAnalyser {
         int connectedDiagonally1 = connectedDiagonal1Up(this.counter) + connectedDiagonal1Down(this.counter);
         int connectedDiagonally2 = connectedDiagonal2Up(this.counter) + connectedDiagonal2Down(this.counter);
 
-        int connectedInRowOpponent = connectedRight(getOtherCounter()) + connectedLeft(getOtherCounter());
-        int connectedInColumnOpponent = connectedUp(getOtherCounter()) + connectedDown(getOtherCounter());
-        int connectedDiagonally1Opponent = connectedDiagonal1Up(getOtherCounter()) + connectedDiagonal1Down(getOtherCounter());
-        int connectedDiagonally2Opponent = connectedDiagonal2Up(getOtherCounter()) + connectedDiagonal2Down(getOtherCounter());
+//        int connectedInRowOpponent = connectedRight(getOtherCounter()) + connectedLeft(getOtherCounter());
+//        int connectedInColumnOpponent = connectedUp(getOtherCounter()) + connectedDown(getOtherCounter());
+//        int connectedDiagonally1Opponent = connectedDiagonal1Up(getOtherCounter()) + connectedDiagonal1Down(getOtherCounter());
+//        int connectedDiagonally2Opponent = connectedDiagonal2Up(getOtherCounter()) + connectedDiagonal2Down(getOtherCounter());
 
+        int connectedInRowOpponent1 = connectedRight(getOtherCounter());
+        int connectedInColumnOpponent1 = connectedUp(getOtherCounter());
+        int connectedDiagonally1Opponent1 = connectedDiagonal1Up(getOtherCounter());
+        int connectedDiagonally2Opponent1 = connectedDiagonal2Up(getOtherCounter());
 
+        int connectedInRowOpponent2 = connectedLeft(getOtherCounter());
+        int connectedInColumnOpponent2 = connectedDown(getOtherCounter());
+        int connectedDiagonally1Opponent2 = connectedDiagonal1Down(getOtherCounter());
+        int connectedDiagonally2Opponent2 = connectedDiagonal2Down(getOtherCounter());
 
 
         int closerToCentreBias = 0;
@@ -101,10 +109,14 @@ public class BoardAnalyser {
                 (int)Math.pow(connectedDiagonally1*2, 2) +
                 (int)Math.pow(connectedDiagonally2*2, 2) +
                 closerToCentreBias +
-                (int)Math.pow(connectedInRowOpponent, 2) +
-                (int)Math.pow(connectedInColumnOpponent, 2) +
-                (int)Math.pow(connectedDiagonally1Opponent, 2) +
-                (int)Math.pow(connectedDiagonally2Opponent, 2);
+                (int)Math.pow(connectedInRowOpponent1, 2) +
+                (int)Math.pow(connectedInColumnOpponent1, 2) +
+                (int)Math.pow(connectedDiagonally1Opponent1, 2) +
+                (int)Math.pow(connectedDiagonally2Opponent1, 2) +
+                (int)Math.pow(connectedInRowOpponent2, 2) +
+                (int)Math.pow(connectedInColumnOpponent2, 2) +
+                (int)Math.pow(connectedDiagonally1Opponent2, 2) +
+                (int)Math.pow(connectedDiagonally2Opponent2, 2);
 
 
         return score;

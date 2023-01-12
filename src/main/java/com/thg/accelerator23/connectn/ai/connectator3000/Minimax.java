@@ -5,12 +5,15 @@ import com.thehutgroup.accelerator.connectn.player.Counter;
 import com.thehutgroup.accelerator.connectn.player.InvalidMoveException;
 import com.thehutgroup.accelerator.connectn.player.Position;
 
+import java.util.stream.IntStream;
+
 public class Minimax {
     Board board;
     Counter myCounter;
     int maxDepth;
     int alpha;
     int beta;
+    int[] zigzag;
 
     public Minimax(Board board, Counter counter, int maxDepth, int alpha, int beta){
         this.board = board;
@@ -18,6 +21,7 @@ public class Minimax {
         this.maxDepth = maxDepth;
         this.alpha = alpha;
         this.beta = beta;
+        this.zigzag = IntStream.range(0, board.getConfig().getWidth()).toArray();
     }
 
     public int runMinimax(){
@@ -25,6 +29,32 @@ public class Minimax {
         System.out.println("best score: " + getScoreFromScoreMoveArray(result));
         System.out.println("best move: " + getMoveFromScoreMoveArray(result));
         return getMoveFromScoreMoveArray(result);
+
+    }
+
+    private int[] makeZigzag(){
+        int[] arrayInOrder = IntStream.range(0, board.getConfig().getWidth()).toArray();
+
+        boolean flag = false;
+        for (int i = 0; i < arrayInOrder.length; i++){
+            if (!flag){
+                if (!(arrayInOrder[i] < arrayInOrder[i +1])){
+                    int holder = arrayInOrder[i];
+                    arrayInOrder[i] = arrayInOrder[i + 1];
+                    arrayInOrder[i + 1] = holder;
+                }
+                flag = true;
+            } else {
+                if (!(arrayInOrder[i] < arrayInOrder[i + 1])){
+                    int holder = arrayInOrder[i];
+                    arrayInOrder[i] = arrayInOrder[i + 1];
+                    arrayInOrder[i + 1] = holder;
+                }
+                flag = false;
+            }
+        }
+
+        return arrayInOrder;
 
     }
 
