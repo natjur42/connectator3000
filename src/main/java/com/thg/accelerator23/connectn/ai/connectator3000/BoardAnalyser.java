@@ -49,8 +49,8 @@ public class BoardAnalyser {
 
     protected boolean hasWonRow() {
         int connectedSoFar = 1 +
-                connectedRight() +
-                connectedLeft();
+                connectedRight(this.counter) +
+                connectedLeft(this.counter);
 
         return connectedSoFar >= getWinningNumber();
     }
@@ -63,29 +63,54 @@ public class BoardAnalyser {
         return board.getConfig().getHeight();
     }
 
+    private Counter getOtherCounter(){
+        if (this.counter == Counter.X){
+            return Counter.O;
+        } else if (this.counter == Counter.O){
+            return Counter.X;
+        } else {
+            throw new RuntimeException("Unknown Counter." + this.counter);
+        }
+    }
+
     public int evaluateBoard() {
 
-        //TODO: blocking opponent +points
-        //TODO: check around the last token you inserted
-        int connectedInRow = connectedRight() + connectedLeft();
-        int connectedInColumn = connectedUp() + connectedDown();
-        int connectedDiagonally1 = connectedDiagonal1Up() + connectedDiagonal1Down();
-        int connectedDiagonally2 = connectedDiagonal2Up() + connectedDiagonal2Down();
+        int connectedInRow = connectedRight(this.counter) + connectedLeft(this.counter);
+        int connectedInColumn = connectedUp(this.counter) + connectedDown(this.counter);
+        int connectedDiagonally1 = connectedDiagonal1Up(this.counter) + connectedDiagonal1Down(this.counter);
+        int connectedDiagonally2 = connectedDiagonal2Up(this.counter) + connectedDiagonal2Down(this.counter);
+
+        int connectedInRowOpponent = connectedRight(getOtherCounter()) + connectedLeft(getOtherCounter());
+        int connectedInColumnOpponent = connectedUp(getOtherCounter()) + connectedDown(getOtherCounter());
+        int connectedDiagonally1Opponent = connectedDiagonal1Up(getOtherCounter()) + connectedDiagonal1Down(getOtherCounter());
+        int connectedDiagonally2Opponent = connectedDiagonal2Up(getOtherCounter()) + connectedDiagonal2Down(getOtherCounter());
+
+
+
 
         int closerToCentreBias = 0;
 
         int proximityToCentre = abs(lastCounterPosition.getX() - getBoardWidth() / 2);
 
         if (proximityToCentre <= 3) {
-            closerToCentreBias = 1;
+            closerToCentreBias = 3;
         }
 
-        int score = connectedInRow * 3 + connectedInColumn * 3 + connectedDiagonally1 * 3 + connectedDiagonally2 * 3 + closerToCentreBias;
+        int score = (int)Math.pow(connectedInRow * 2, 2) +
+                (int)Math.pow(connectedInColumn*2, 2) +
+                (int)Math.pow(connectedDiagonally1*2, 2) +
+                (int)Math.pow(connectedDiagonally2*2, 2) +
+                closerToCentreBias +
+                (int)Math.pow(connectedInRowOpponent, 2) +
+                (int)Math.pow(connectedInColumnOpponent, 2) +
+                (int)Math.pow(connectedDiagonally1Opponent, 2) +
+                (int)Math.pow(connectedDiagonally2Opponent, 2);
+
 
         return score;
     }
 
-    private int connectedRight() {
+    private int connectedRight(Counter counter) {
         int x = lastCounterPosition.getX();
         int y = lastCounterPosition.getY();
         int connectedSoFar = 0;
@@ -96,7 +121,7 @@ public class BoardAnalyser {
 
             Position position = new Position(currentX, y);
             counterCheck = board.getCounterAtPosition(position);
-            connectedSoFar = updateConnectedSoFar(connectedSoFar, position);
+            connectedSoFar = updateConnectedSoFar(connectedSoFar, position, counter);
 
             currentX++;
         }
@@ -104,7 +129,7 @@ public class BoardAnalyser {
         return connectedSoFar;
     }
 
-    private int connectedLeft() {
+    private int connectedLeft(Counter counter) {
         int x = lastCounterPosition.getX();
         int y = lastCounterPosition.getY();
         int connectedSoFar = 0;
@@ -115,7 +140,7 @@ public class BoardAnalyser {
 
             Position position = new Position(currentX, y);
             counterCheck = board.getCounterAtPosition(position);
-            connectedSoFar = updateConnectedSoFar(connectedSoFar, position);
+            connectedSoFar = updateConnectedSoFar(connectedSoFar, position, counter);
 
             currentX--;
         }
@@ -125,13 +150,13 @@ public class BoardAnalyser {
 
     protected boolean hasWonColumn() {
         int connectedSoFar = 1 +
-                connectedUp() +
-                connectedDown();
+                connectedUp(this.counter) +
+                connectedDown(this.counter);
 
         return connectedSoFar >= winningNumber;
     }
 
-    private int connectedUp() {
+    private int connectedUp(Counter counter) {
         int x = lastCounterPosition.getX();
         int y = lastCounterPosition.getY();
         int connectedSoFar = 0;
@@ -143,7 +168,7 @@ public class BoardAnalyser {
             Position position = new Position(x, currentY);
 
             counterCheck = board.getCounterAtPosition(position);
-            connectedSoFar = updateConnectedSoFar(connectedSoFar, position);
+            connectedSoFar = updateConnectedSoFar(connectedSoFar, position, counter);
 
             currentY++;
         }
@@ -151,7 +176,7 @@ public class BoardAnalyser {
         return connectedSoFar;
     }
 
-    private int connectedDown() {
+    private int connectedDown(Counter counter) {
         int x = lastCounterPosition.getX();
         int y = lastCounterPosition.getY();
         int connectedSoFar = 0;
@@ -163,7 +188,7 @@ public class BoardAnalyser {
             Position position = new Position(x, currentY);
             counterCheck = board.getCounterAtPosition(position);
 
-            connectedSoFar = updateConnectedSoFar(connectedSoFar, position);
+            connectedSoFar = updateConnectedSoFar(connectedSoFar, position, counter);
             currentY--;
         }
 
@@ -172,13 +197,13 @@ public class BoardAnalyser {
 
     protected boolean hasWonDiagonal1() {
         int connectedSoFar = 1 +
-                connectedDiagonal1Up() +
-                connectedDiagonal1Down();
+                connectedDiagonal1Up(this.counter) +
+                connectedDiagonal1Down(this.counter);
 
         return connectedSoFar >= winningNumber;
     }
 
-    private int connectedDiagonal1Down() {
+    private int connectedDiagonal1Down(Counter counter) {
         int x = lastCounterPosition.getX();
         int y = lastCounterPosition.getY();
         int connectedSoFar = 0;
@@ -190,7 +215,7 @@ public class BoardAnalyser {
 
             Position position = new Position(currentX, currentY);
             counterCheck = board.getCounterAtPosition(position);
-            connectedSoFar = updateConnectedSoFar(connectedSoFar, position);
+            connectedSoFar = updateConnectedSoFar(connectedSoFar, position, counter);
             currentY--;
             currentX--;
         }
@@ -198,7 +223,7 @@ public class BoardAnalyser {
         return connectedSoFar;
     }
 
-    private int connectedDiagonal1Up() {
+    private int connectedDiagonal1Up(Counter counter) {
         int x = lastCounterPosition.getX();
         int y = lastCounterPosition.getY();
         int connectedSoFar = 0;
@@ -210,7 +235,7 @@ public class BoardAnalyser {
 
             Position position = new Position(currentX, currentY);
             counterCheck = board.getCounterAtPosition(position);
-            connectedSoFar = updateConnectedSoFar(connectedSoFar, position);
+            connectedSoFar = updateConnectedSoFar(connectedSoFar, position, counter);
             currentY++;
             currentX++;
         }
@@ -220,13 +245,13 @@ public class BoardAnalyser {
 
     protected boolean hasWonDiagonal2() {
         int connectedSoFar = 1 +
-                connectedDiagonal2Up() +
-                connectedDiagonal2Down();
+                connectedDiagonal2Up(this.counter) +
+                connectedDiagonal2Down(this.counter);
 
         return connectedSoFar >= winningNumber;
     }
 
-    private int connectedDiagonal2Up() {
+    private int connectedDiagonal2Up(Counter counter) {
         int x = lastCounterPosition.getX();
         int y = lastCounterPosition.getY();
         int connectedSoFar = 0;
@@ -238,7 +263,7 @@ public class BoardAnalyser {
 
             Position position = new Position(currentX, currentY);
             counterCheck = board.getCounterAtPosition(position);
-            connectedSoFar = updateConnectedSoFar(connectedSoFar, position);
+            connectedSoFar = updateConnectedSoFar(connectedSoFar, position, counter);
             currentY++;
             currentX--;
         }
@@ -246,7 +271,7 @@ public class BoardAnalyser {
         return connectedSoFar;
     }
 
-    private int connectedDiagonal2Down() {
+    private int connectedDiagonal2Down(Counter counter) {
         int x = lastCounterPosition.getX();
         int y = lastCounterPosition.getY();
         int connectedSoFar = 0;
@@ -258,7 +283,7 @@ public class BoardAnalyser {
 
             Position position = new Position(currentX, currentY);
             counterCheck = board.getCounterAtPosition(position);
-            connectedSoFar = updateConnectedSoFar(connectedSoFar, position);
+            connectedSoFar = updateConnectedSoFar(connectedSoFar, position, counter);
             currentY--;
             currentX++;
         }
@@ -266,8 +291,7 @@ public class BoardAnalyser {
         return connectedSoFar;
     }
 
-
-    private int updateConnectedSoFar(int connectedSoFar, Position position) {
+    private int updateConnectedSoFar(int connectedSoFar, Position position, Counter counter) {
         if (board.isWithinBoard(position)) {
             Counter counterCheck = board.getCounterAtPosition(position);
             if (counterCheck == counter) {
