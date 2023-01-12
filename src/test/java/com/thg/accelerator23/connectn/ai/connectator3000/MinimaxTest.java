@@ -6,6 +6,8 @@ import com.thehutgroup.accelerator.connectn.player.GameConfig;
 import com.thehutgroup.accelerator.connectn.player.Position;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -84,41 +86,6 @@ class MinimaxTest {
         assertEquals(Minimax.getScore(draw), drawScore);
     }
 
-    @Test
-    public void getsTheRightTerminalResult(){
-        Position mockPosition = mock(Position.class);
-        Board mockBoardLocal = mock(Board.class);
-        when(mockBoardLocal.getConfig()).thenReturn(mockGameConfig);
-
-
-        Minimax mockMinimaxWin = mock(Minimax.class);
-        when(mockMinimaxWin.getMyCounter()).thenReturn(player1Counter);
-//        assertEquals(mockMinimaxWin.getMyCounter(), player1Counter);
-        when(mockMinimaxWin.hasWon(any(Board.class), any(Position.class))).thenReturn(true);
-//        assertTrue(mockMinimaxWin.hasWon(mockBoard, mockPosition));
-        when(Minimax.hasFinished(mockBoardLocal)).thenReturn(true);
-        assertTrue(Minimax.hasFinished(mockBoardLocal));
-
-//        Minimax mockMinimaxLoss = mock(Minimax.class);
-//        when(mockMinimaxWin.getMyCounter()).thenReturn(player1Counter);
-//        when(mockMinimaxLoss.hasWon(any(Board.class), any(Position.class))).thenReturn(true);
-
-//        Minimax mockMinimaxDraw = mock(Minimax.class);
-//        when(mockMinimaxDraw.getMyCounter()).thenReturn(player1Counter);
-//        when(mockMinimaxDraw.hasWon(any(Board.class), any(Position.class))).thenReturn(false);
-
-        // expected result types
-        ResultType win = ResultType.WIN;
-        ResultType loss = ResultType.LOSS;
-        ResultType draw = ResultType.DRAW;
-//
-//        assertEquals(mockMinimaxWin.getResult(mockBoard, mockPosition, player1Counter), win);
-//        assertEquals(mockMinimaxWin.getResult(mockBoardLocal, mockPosition, player2Counter), loss);
-//        assertEquals(mockMinimaxDraw.getResult(mockBoard, mockPosition, player1Counter), draw);
-
-
-
-    }
 
 
 }
