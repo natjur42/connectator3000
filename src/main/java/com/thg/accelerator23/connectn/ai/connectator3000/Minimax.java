@@ -57,7 +57,6 @@ public class Minimax {
 
 
     private int[] maximize(Board board, Position lastPosition, Counter counter, int alpha, int beta, int depth) {
-//        System.out.println(depth);
         int score;
         int bestScore = -100000;
         int bestMove;
@@ -66,9 +65,6 @@ public class Minimax {
         if (depth == this.maxDepth) {
             BoardAnalyser analyser = new BoardAnalyser(board, lastPosition);
             score = analyser.evaluateBoard();
-//            System.out.println("score" + score);
-//            System.out.println("move" + lastPosition.getX());
-
             returnVals[0] = score;
             returnVals[1] = lastPosition.getX();
 
@@ -116,6 +112,17 @@ public class Minimax {
         return returnVals;
     }
 
+    private static int[] getEvaluatedScore(Board board, Position lastPosition) {
+        int score;
+        BoardAnalyser analyser = new BoardAnalyser(board, lastPosition);
+        score = analyser.evaluateBoard();
+        int[] returnVals = new int[2];
+        returnVals[0] = score;
+        returnVals[1] = lastPosition.getX();
+
+        return returnVals;
+    }
+
     private int[] minimize(Board board, Position lastPosition, Counter counter, int alpha, int beta, int depth) {
         int score;
         int bestScore = 100000000;
@@ -125,10 +132,8 @@ public class Minimax {
         if (depth == maxDepth) {
             BoardAnalyser analyser = new BoardAnalyser(board, lastPosition);
             score = analyser.evaluateBoard();
-
             returnVals[0] = score;
             returnVals[1] = lastPosition.getX();
-
             return returnVals;
         }
 
@@ -180,7 +185,7 @@ public class Minimax {
         return scoreMove[1];
     }
 
-    public static Counter getOtherCounter(Counter counter) {
+    static public Counter getOtherCounter(Counter counter) {
         if (counter == Counter.O) {
             return Counter.X;
         } else if (counter == Counter.X) {
@@ -190,16 +195,13 @@ public class Minimax {
         }
     }
 
-    private boolean isEmpty(Board board, int moveX) {
+    static protected boolean isEmpty(Board board, int moveX) {
         return !board.hasCounterAtPosition(new Position(moveX, board.getConfig().getHeight() - 1));
     }
 
-    protected boolean hasWon(Board board, Position lastCounterPosition) {
-//        System.out.println("last counter position: " + lastCounterPosition.getX() + ", " + lastCounterPosition.getY());
+    static protected boolean hasWon(Board board, Position lastCounterPosition) {
         BoardAnalyser analyser = new BoardAnalyser(board, lastCounterPosition);
-        boolean hasWonBool = analyser.hasWon();
-//        System.out.println("hasWonBool: " + hasWonBool);
-        return hasWonBool;
+        return analyser.hasWon();
     }
 
     protected ResultType getResult(Board board, Position lastCounterPosition, Counter counter) {

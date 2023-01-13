@@ -63,10 +63,10 @@ public class BoardAnalyser {
         return board.getConfig().getHeight();
     }
 
-    private Counter getOtherCounter(){
-        if (this.counter == Counter.X){
+    private Counter getOtherCounter() {
+        if (this.counter == Counter.X) {
             return Counter.O;
-        } else if (this.counter == Counter.O){
+        } else if (this.counter == Counter.O) {
             return Counter.X;
         } else {
             throw new RuntimeException("Unknown Counter." + this.counter);
@@ -75,49 +75,35 @@ public class BoardAnalyser {
 
     public int evaluateBoard() {
 
-        int connectedInRow = connectedRight(this.counter) + connectedLeft(this.counter);
-        int connectedInColumn = connectedUp(this.counter) + connectedDown(this.counter);
-        int connectedDiagonally1 = connectedDiagonal1Up(this.counter) + connectedDiagonal1Down(this.counter);
-        int connectedDiagonally2 = connectedDiagonal2Up(this.counter) + connectedDiagonal2Down(this.counter);
+        int connectedInRow = connectedRight(this.counter) + connectedLeft(this.counter) + 1;
+        int connectedInColumn = connectedUp(this.counter) + connectedDown(this.counter) + 1;
+        int connectedDiagonally1 = connectedDiagonal1Up(this.counter) + connectedDiagonal1Down(this.counter) + 1;
+        int connectedDiagonally2 = connectedDiagonal2Up(this.counter) + connectedDiagonal2Down(this.counter) + 1;
 
-//        int connectedInRowOpponent = connectedRight(getOtherCounter()) + connectedLeft(getOtherCounter());
-//        int connectedInColumnOpponent = connectedUp(getOtherCounter()) + connectedDown(getOtherCounter());
-//        int connectedDiagonally1Opponent = connectedDiagonal1Up(getOtherCounter()) + connectedDiagonal1Down(getOtherCounter());
-//        int connectedDiagonally2Opponent = connectedDiagonal2Up(getOtherCounter()) + connectedDiagonal2Down(getOtherCounter());
+        int connectedInRowOpponent1 = connectedRight(getOtherCounter()) + connectedLeft(getOtherCounter()) + 1;
+        int connectedInColumnOpponent1 = connectedUp(getOtherCounter()) + connectedDown(getOtherCounter()) + 1;
+        int connectedDiagonally1Opponent1 = connectedDiagonal1Up(getOtherCounter()) + connectedDiagonal1Down(getOtherCounter()) + 1;
+        int connectedDiagonally2Opponent1 = connectedDiagonal2Up(getOtherCounter()) + connectedDiagonal2Down(getOtherCounter()) + 1;
 
-        int connectedInRowOpponent1 = connectedRight(getOtherCounter());
-        int connectedInColumnOpponent1 = connectedUp(getOtherCounter());
-        int connectedDiagonally1Opponent1 = connectedDiagonal1Up(getOtherCounter());
-        int connectedDiagonally2Opponent1 = connectedDiagonal2Up(getOtherCounter());
+        int[] opponentsPieces = {connectedInRowOpponent1, connectedInColumnOpponent1, connectedDiagonally1Opponent1, connectedDiagonally2Opponent1};
+        int[] myPieces = {connectedInRow, connectedInColumn, connectedDiagonally1, connectedDiagonally2};
 
-        int connectedInRowOpponent2 = connectedLeft(getOtherCounter());
-        int connectedInColumnOpponent2 = connectedDown(getOtherCounter());
-        int connectedDiagonally1Opponent2 = connectedDiagonal1Down(getOtherCounter());
-        int connectedDiagonally2Opponent2 = connectedDiagonal2Down(getOtherCounter());
-
-
-        int closerToCentreBias = 0;
-
-        int proximityToCentre = abs(lastCounterPosition.getX() - getBoardWidth() / 2);
-
-        if (proximityToCentre <= 3) {
-            closerToCentreBias = 3;
+        int score = 0;
+        for (int i = 0; i < 4; i++) {
+            if (opponentsPieces[i] >= 4){
+                score = score + 1000;
+            } else {
+                score = score + (int) Math.pow(opponentsPieces[i], 2);
+            }
         }
 
-        int score = (int)Math.pow(connectedInRow * 2, 2) +
-                (int)Math.pow(connectedInColumn*2, 2) +
-                (int)Math.pow(connectedDiagonally1*2, 2) +
-                (int)Math.pow(connectedDiagonally2*2, 2) +
-                closerToCentreBias +
-                (int)Math.pow(connectedInRowOpponent1, 2) +
-                (int)Math.pow(connectedInColumnOpponent1, 2) +
-                (int)Math.pow(connectedDiagonally1Opponent1, 2) +
-                (int)Math.pow(connectedDiagonally2Opponent1, 2) +
-                (int)Math.pow(connectedInRowOpponent2, 2) +
-                (int)Math.pow(connectedInColumnOpponent2, 2) +
-                (int)Math.pow(connectedDiagonally1Opponent2, 2) +
-                (int)Math.pow(connectedDiagonally2Opponent2, 2);
-
+        for (int i = 0; i < 4; i++){
+            if (myPieces[i] >= 4){
+                score = score + 1000;
+            } else {
+                score = score + (int) Math.pow(myPieces[i], 2);
+            }
+        }
 
         return score;
     }
