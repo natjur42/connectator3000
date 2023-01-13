@@ -257,16 +257,4 @@ public class Minimax {
     }
 
 
-    private int makeRandomMove(Board board) {
-        int min = 0;
-        int max = board.getConfig().getWidth() - 1;
-
-        int move = (int) Math.floor(Math.random() * (max - min + 1) + min);
-        while (isEmpty(board, move)) {
-            move = (int) Math.floor(Math.random() * (max - min + 1) + min);
-        }
-
-        return move;
-    }
-
 }
