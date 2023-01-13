@@ -10,7 +10,7 @@ public class ConnectIfYouDare extends Player {
 
     @Override
     public int makeMove(Board board) {
-        Minimax minimax = new Minimax(board, getCounter(), 11, -1000, 1000);
+        Minimax minimax = new Minimax(board, getCounter(), 9, -1000, 1000);
         // max depth must be odd to evaluate winning
 
         return minimax.runMinimax();
