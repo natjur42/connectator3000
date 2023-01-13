@@ -90,8 +90,9 @@ class MinimaxTest {
     public void zigzagWorks(){
         Minimax testMinimax = new Minimax(mockBoard, player2Counter, 7, -1000, 1000);
 
-        //TODO: check if the makeZigzag function works right
-        //TODO: make the maximize/minimize functions iterate over zigzag instead of going 0-9
+        for (int i = 0; i < 10; i++){
+            System.out.println(testMinimax.zigzag[i]);
+        }
 
     }
 

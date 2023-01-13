@@ -15,16 +15,16 @@ public class Minimax {
     int beta;
     int[] zigzag;
 
-    public Minimax(Board board, Counter counter, int maxDepth, int alpha, int beta){
+    public Minimax(Board board, Counter counter, int maxDepth, int alpha, int beta) {
         this.board = board;
         this.myCounter = counter;
         this.maxDepth = maxDepth;
         this.alpha = alpha;
         this.beta = beta;
-        this.zigzag = IntStream.range(0, board.getConfig().getWidth()).toArray();
+        this.zigzag = makeZigzag();
     }
 
-    public int runMinimax(){
+    public int runMinimax() {
         int[] result = maximize(board, null, myCounter, alpha, beta, 0);
         System.out.println("best score: " + getScoreFromScoreMoveArray(result));
         System.out.println("best move: " + getMoveFromScoreMoveArray(result));
@@ -32,30 +32,27 @@ public class Minimax {
 
     }
 
-    private int[] makeZigzag(){
-        int[] arrayInOrder = IntStream.range(0, board.getConfig().getWidth()).toArray();
+    private int[] makeZigzag() {
+        int[] arrayInOrder = new int[board.getConfig().getWidth()];
 
-        boolean flag = false;
-        for (int i = 0; i < arrayInOrder.length; i++){
-            if (!flag){
-                if (!(arrayInOrder[i] < arrayInOrder[i +1])){
-                    int holder = arrayInOrder[i];
-                    arrayInOrder[i] = arrayInOrder[i + 1];
-                    arrayInOrder[i + 1] = holder;
-                }
-                flag = true;
+        boolean addition = arrayInOrder.length % 2 == 0;
+        int numberForArray = arrayInOrder.length / 2;
+
+        int index = 0;
+        for (int i = 0; i < arrayInOrder.length; i++) {
+            if (addition) {
+                numberForArray = numberForArray + i;
+                arrayInOrder[index] = numberForArray;
+                addition = false;
             } else {
-                if (!(arrayInOrder[i] < arrayInOrder[i + 1])){
-                    int holder = arrayInOrder[i];
-                    arrayInOrder[i] = arrayInOrder[i + 1];
-                    arrayInOrder[i + 1] = holder;
-                }
-                flag = false;
+                numberForArray = numberForArray - i;
+                arrayInOrder[index] = numberForArray;
+                addition = true;
             }
+
+            index++;
         }
-
         return arrayInOrder;
-
     }
 
 
@@ -66,7 +63,7 @@ public class Minimax {
         int bestMove;
         int[] returnVals = new int[2];
 
-        if (depth == this.maxDepth){
+        if (depth == this.maxDepth) {
             BoardAnalyser analyser = new BoardAnalyser(board, lastPosition);
             score = analyser.evaluateBoard();
 //            System.out.println("score" + score);
@@ -79,7 +76,8 @@ public class Minimax {
         }
 
 
-        for (int possibleMove = 0; possibleMove < board.getConfig().getWidth(); possibleMove++) {
+        for (int i = 0; i < board.getConfig().getWidth(); i++) {
+            int possibleMove = zigzag[i];
             if (isEmpty(board, possibleMove)) {
                 try {
                     Position possibleCounterPosition = getCounterPositionFromMoveOnX(board, possibleMove);
@@ -100,14 +98,13 @@ public class Minimax {
                     }
 
 
-                    if (score > alpha){
+                    if (score > alpha) {
                         alpha = score;
                     }
 
-                    if (beta <= alpha){
+                    if (beta <= alpha) {
                         return returnVals;
                     }
-
 
 
                 } catch (InvalidMoveException e) {
@@ -125,7 +122,7 @@ public class Minimax {
         int bestMove;
         int[] returnVals = new int[2];
 
-        if (depth == maxDepth){
+        if (depth == maxDepth) {
             BoardAnalyser analyser = new BoardAnalyser(board, lastPosition);
             score = analyser.evaluateBoard();
 
@@ -135,7 +132,8 @@ public class Minimax {
             return returnVals;
         }
 
-        for (int possibleMove = 0; possibleMove < board.getConfig().getWidth(); possibleMove++) {
+        for (int i = 0; i < board.getConfig().getWidth(); i++) {
+            int possibleMove = zigzag[i];
 
             if (isEmpty(board, possibleMove)) {
                 try {
@@ -146,7 +144,7 @@ public class Minimax {
                     if (!(result == null)) {
                         score = getScore(result);
                     } else {
-                        score = getScoreFromScoreMoveArray(maximize(possibleBoard, possibleCounterPosition, getOtherCounter(counter), alpha, beta, depth +1));
+                        score = getScoreFromScoreMoveArray(maximize(possibleBoard, possibleCounterPosition, getOtherCounter(counter), alpha, beta, depth + 1));
                     }
 
                     if (score < bestScore) {
@@ -156,11 +154,11 @@ public class Minimax {
                         returnVals[1] = bestMove;
                     }
 
-                    if (score < beta){
+                    if (score < beta) {
                         beta = score;
                     }
 
-                    if (beta <= alpha){
+                    if (beta <= alpha) {
                         return returnVals;
                     }
 
@@ -172,7 +170,6 @@ public class Minimax {
         }
         return returnVals;
     }
-
 
 
     private int getScoreFromScoreMoveArray(int[] scoreMove) {
