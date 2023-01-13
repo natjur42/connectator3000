@@ -9,7 +9,6 @@ import java.util.Scanner;
 public class HumanPlayer extends Player {
 
     public HumanPlayer(Counter counter) {
-        //TODO: fill in your name here
         super(counter, "Natalia");
     }
 

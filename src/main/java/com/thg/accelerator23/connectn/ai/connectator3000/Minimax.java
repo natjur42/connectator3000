@@ -26,8 +26,8 @@ public class Minimax {
 
     public int runMinimax() {
         int[] result = maximize(board, null, myCounter, alpha, beta, 0);
-        System.out.println("best score: " + getScoreFromScoreMoveArray(result));
-        System.out.println("best move: " + getMoveFromScoreMoveArray(result));
+//        System.out.println("best score: " + getScoreFromScoreMoveArray(result));
+//        System.out.println("best move: " + getMoveFromScoreMoveArray(result));
         return getMoveFromScoreMoveArray(result);
 
     }
